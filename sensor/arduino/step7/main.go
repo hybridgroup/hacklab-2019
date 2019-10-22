@@ -34,17 +34,13 @@ var (
 )
 
 // access point info. Change this to match your WiFi connection information.
-const ssid = "YOURSSID"
-const pass = "YOURPASS"
+const ssid = "golab"
+const pass = "gophers2019"
 
 // IP address of the MQTT broker to use. Replace with your own info, if so desired.
-const server = "ssl://test.mosquitto.org:8883"
+const server = "tcp://test.mosquitto.org:1883"
 
 func main() {
-	doWork()
-}
-
-func doWork() {
 	uart.Configure(machine.UARTConfig{TX: tx, RX: rx})
 	rand.Seed(time.Now().UnixNano())
 
@@ -117,6 +113,13 @@ func doWork() {
 			blue.Low()
 		} else {
 			blue.High()
+			println("Publishing MQTT message...")
+			data := []byte("{\"e\":[{ \"n\":\"hello\", \"sv\":\"world\" }]}")
+			token := cl.Publish(topic, 0, false, data)
+			token.Wait()
+			if token.Error() != nil {
+				println(token.Error().Error())
+			}
 		}
 
 		touchPush = touch.Get()
@@ -124,15 +127,6 @@ func doWork() {
 			bzr.On()
 		} else {
 			bzr.Off()
-		}
-
-		println("Publishing MQTT message...")
-		data := []byte("{\"e\":[{ \"n\":\"hello\", \"sv\":\"world\" }]}")
-		token := cl.Publish(topic, 0, false, data)
-		token.Wait()
-		if token.Error() != nil {
-			println(token.Error().Error())
-			break
 		}
 
 		time.Sleep(time.Millisecond * 100)

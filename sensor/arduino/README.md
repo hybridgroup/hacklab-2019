@@ -276,6 +276,7 @@ Adjusting the dial sensor should control the brightness of the green LED.
 - Connect a jumper wire from the "SDA" pin on the breadboard next to the OLED display, to the Arduino Nano33's A4 pin.
 
 #### Linux
+
 ```
 tinygo flash -target arduino-nano33 ./sensor/arduino/step6/main.go
 ```
@@ -294,17 +295,23 @@ respectively.
 
 ![Arduino](./images/step6.png)
 
-In this step we will connect to a machine to machine messaging server using the MQTT protocol. No additional hardware is required for this step, but you will need to configure some software changes.
+In this step we will connect to a machine to machine messaging server using the MQTT protocol. No additional hardware is required for this step.
 
-Edit the file `sensor/arduino/step7/main.go` and change the following values at the top of the file, then save them:
-
-```
-
-```
-
-Now you can run the code example:
-
+#### Linux
 
 ```
 tinygo flash -target arduino-nano33 ./sensor/arduino/step7/main.go
 ```
+
+#### macOS
+```
+tinygo flash -target arduino-nano33 -port=$NANO33_DEV_PATH ./sensor/arduino/step7/main.go
+```
+
+How to tell if it is working...
+
+```
+mosquitto_sub -h 'test.mosquitto.org' -t 'tinygo'
+```
+
+When you run this command, you should be able to see the messages appear from your own machine when you press the button.
